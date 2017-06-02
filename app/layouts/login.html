@@ -1,0 +1,62 @@
+<script>
+    loadCss(['css/login.css'])
+</script>
+
+
+<div class = "container">
+    <div class="wrapper">
+        <form method="post" name="loginForm" id="loginForm" class="form-signin">
+            <h3 class="form-signin-heading">Welcome Back! Please Sign In</h3>
+            <hr class="colorgraph"><br>
+
+            <input type="text" id="username" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
+            <input type="password" id="password" class="form-control" name="password" placeholder="Password" required=""/>
+
+            <button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Login" type="Submit">Login</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    $('#loginForm').submit(function (e) {
+        e.preventDefault();
+
+        formData = formToArray("loginForm");
+        logMessage(formData);
+
+        firebase.auth().signInWithEmailAndPassword(formData.username, formData.password).then(
+                function() {
+
+                    redirectUrl("dashboard");
+                   // alert("Login was successful")
+
+                },function (error) {
+                    alert(error);
+                }
+        );
+
+    });
+
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            var displayName = user.displayName;
+            var email = user.email;
+            var emailVerified = user.emailVerified;
+            var photoURL = user.photoURL;
+            var isAnonymous = user.isAnonymous;
+            var uid = user.uid;
+            var providerData = user.providerData;
+
+            logMessage(user);
+            // ...
+        } else {
+            // User is signed out.
+            // ...
+        }
+    });
+
+</script>

@@ -1,0 +1,163 @@
+---
+view: dashboard_layout.html
+---
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">New Content</h4>
+                </div>
+                <div class="content">
+                    <form method="post" name="contentForm" id="contentForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input type="text" id="title" name="title" class="form-control" placeholder="Title" value="" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" id="description" name="description" class="form-control" placeholder="Description" value="" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Content Type</label>
+                                    <select id="content_type" name="content_type" class="form-control">
+                                        <option value="">Select Content Type</option>
+                                        <option value="text">Text Only</option>
+                                        <option value="image">Image & Text</option>
+                                        <option value="video">Video & Text</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Content File</label>
+                                    <input type="file" id="file_to_upload" name="file_to_upload" class="form-control" placeholder="Company" value="Mike">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Text Content</label>
+                                    <textarea id="content" name="content" rows="5" class="form-control" placeholder="Text Content here" value=""></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-info btn-fill pull-right">Save Content</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $('#contentForm').submit(function (e) {
+        e.preventDefault();
+
+        formData = formToArray("contentForm");
+        formData.created_at = new Date().valueOf();
+
+        logMessage(formData);
+
+        if(formData.content_type == ""){
+            alert("Please select content type");
+            return;
+        }
+
+
+
+        if((formData.content_type == "image" || formData.content_type == "video") && $("#file_to_upload").val() == null){
+            alert("Please select content file to upload");
+            return;
+        }
+        //return;
+        var savePathNew = '/announcements/';
+
+        showLoading();
+        FirebaseService.saveData({
+            path:savePathNew,
+            data:formData
+        },function (response) {
+                logMessage(response);
+                if(response.error == null){
+                    if(formData.content_type == "image" || formData.content_type == "video"){
+                        var field_name = "";
+                        if(formData.content_type == "image"){
+                            field_name = "photo";
+                        }
+
+                        if(formData.content_type == "video"){
+                            field_name = "video_url";
+                        }
+                        initiateFileUpload(response.node_id,field_name)
+                    }else{
+                        hideLoading();
+                        alert("Content Added");
+                        redirectUrl("dashboard");
+                    }
+                }
+            }
+        )
+    });
+
+
+
+
+
+    initiateFileUpload = function (key,field_name) {
+        var selectedFile = $("#file_to_upload").val();
+
+        if(selectedFile != null) {
+
+            FirebaseService.fileUpload({
+                'file': getInputFile('file_to_upload'),
+                'path': '/announcements/uploads'
+            }, function (data) {
+                console.log(data);
+                if (data.downloadURL) {
+                    // data.downloadURL
+                    var formDataEdit = {};
+
+                    var savePath = '/announcements/'+key+'/';
+                    if(field_name == "photo"){
+                        formDataEdit.photo = data.downloadURL;
+                    }else if(field_name == "video_url"){
+                        formDataEdit.video_url = data.downloadURL;
+                    }
+
+                    FirebaseService.updateData({path:savePath,data:formDataEdit},function (response) {
+                        hideLoading();
+                        if(!response.error){
+                            alert("Content Added");
+                            redirectUrl("dashboard");
+                        }else{
+                            alert("Unable to upload file contents");
+                        }
+                    });
+
+
+                }
+            });
+        }else{
+            alert("Invalid file selected");
+        }
+
+
+    };
+</script>
