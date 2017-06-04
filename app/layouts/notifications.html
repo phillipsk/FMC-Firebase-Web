@@ -1,0 +1,97 @@
+---
+view: dashboard_layout.html
+---
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">New Notification</h4>
+                </div>
+                <div class="content">
+                    <form method="post" name="contentForm" id="contentForm">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input type="text" id="title" name="title" class="form-control" placeholder="Title" value="" required>
+                                </div>
+
+                                
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <textarea id="message" name="message" rows="5" class="form-control" placeholder="Text Content here" value="" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-info btn-fill pull-right">Send Notification</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+
+    $('#contentForm').submit(function (e) {
+        e.preventDefault();
+
+        formData = formToArray("contentForm");
+        var title = formData.title;
+        var message = formData.message;
+
+        var content={};
+        content.en = message;
+
+
+        var parameter = JSON.stringify({
+            app_id: CONFIG.constants("ONE_SIGNAL_APP_ID"),
+            included_segments: ["All"],
+            contents:content
+        });
+
+        logMessage(parameter);
+
+        var params =   {
+            endpoint:"notifications",
+            data:parameter,
+            base_url:CONFIG.constants("ONE_SIGNAL_BASE_URL"),
+            api_key:CONFIG.constants("ONE_SIGNAL_API_KEY"),
+            request_type:'POST'
+        };
+
+
+        apiConnect(params,
+            function (response) {
+            hideLoading();
+                logMessage("*********");
+                logMessage(response);
+                if(response.error){
+                    alert(response.error.responseText);
+                }
+
+                if(!response.error){
+                    if(response.recipients){
+                        $("#title").val("");
+                        $("#message").val("");
+                        alert("Notification Sent");
+                    }
+                }
+            },
+            false
+        )
+
+    });
+</script>

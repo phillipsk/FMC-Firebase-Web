@@ -48,6 +48,27 @@ Path.map("#/dashboard").to(function () {
 
 }).enter(clearPanel);
 
+
+Path.map("#/notifications").to(function () {
+
+    //FirebaseService.findAll(params)
+    renderLayout('notifications', inner_body_container);
+
+    // var path = '/announcements/';
+    // FirebaseService.findAll({
+    //     path: path,
+    //     limit:2000
+    // }, function(data) {
+    //     if(!data.error) {
+    //         logMessage(data);
+    //         renderLayout('dashboard', inner_body_container, data);
+    //     } else {
+    //         logMessage(data.error);
+    //     }
+    // });
+
+}).enter(clearPanel);
+
 Path.map("#/add-content").to(function () {
     renderLayout('add_content', inner_body_container);
 }).enter(clearPanel);

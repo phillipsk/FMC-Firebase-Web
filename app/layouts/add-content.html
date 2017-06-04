@@ -41,7 +41,7 @@ view: dashboard_layout.html
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Content File</label>
-                                    <input type="file" id="file_to_upload" name="file_to_upload" class="form-control" placeholder="Company" value="Mike">
+                                    <input type="file" id="file_to_upload" name="file_to_upload" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -67,11 +67,15 @@ view: dashboard_layout.html
 </div>
 
 <script>
+
+    //logMessage(randomIntFromInterval(4,12));
+
     $('#contentForm').submit(function (e) {
         e.preventDefault();
 
         formData = formToArray("contentForm");
         formData.created_at = new Date().valueOf();
+        formData.likes = randomIntFromInterval(4,12);
 
         logMessage(formData);
 
@@ -117,6 +121,10 @@ view: dashboard_layout.html
     });
 
 
+    function randomIntFromInterval(min,max)
+    {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
 
 
 
@@ -155,6 +163,8 @@ view: dashboard_layout.html
                 }
             });
         }else{
+            hideLoading();
+
             alert("Invalid file selected");
         }
 
