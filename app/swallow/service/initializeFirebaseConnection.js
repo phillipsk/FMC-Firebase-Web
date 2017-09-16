@@ -159,7 +159,11 @@ if (typeof firebase !== 'undefined') {
                     callBackData({node_id: newGeneratedKey});
                 }
             });
-            firebaseBaseDatabase.ref(path).child(newGeneratedKey).setPriority('created');
+
+            var date = new Date().getTime();
+            firebaseBaseDatabase.ref(path).child(newGeneratedKey).child(".priority").set(0 - date);
+            firebaseBaseDatabase.ref(path).child(newGeneratedKey).child("index").set(0 - date);
+            firebaseBaseDatabase.ref(path).child(newGeneratedKey).child("created_at").set(date);
         },
 
         /**

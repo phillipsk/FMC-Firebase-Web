@@ -74,7 +74,7 @@ view: dashboard_layout.html
         e.preventDefault();
 
         formData = formToArray("contentForm");
-        formData.created_at = new Date().valueOf();
+        formData.created_at = Math.floor(new Date().valueOf() / 1000);
         formData.likes = randomIntFromInterval(4,12);
 
         logMessage(formData);
