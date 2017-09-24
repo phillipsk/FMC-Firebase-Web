@@ -2,6 +2,31 @@
 view: dashboard_layout.html
 ---
 
+<!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" />-->
+<!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+
+<!--<script>-->
+
+    <!--loadCss([-->
+        <!--'css/summernote.css'-->
+    <!--]);-->
+    <!--loadScript([-->
+        <!--'http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js',-->
+        <!--'http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css',-->
+        <!--'http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js',-->
+        <!--'js/summernote.js'-->
+    <!--]);-->
+
+
+<!--</script>-->
+
+<!--<link rel="stylesheet" href="css/summernote.css">-->
+<!--<script src="js/summernote.js"/>-->
+
+
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8">
@@ -51,9 +76,11 @@ view: dashboard_layout.html
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Text Content</label>
-                                    <textarea id="content" name="content" rows="5" class="form-control" placeholder="Text Content here" value=""></textarea>
+                                    <div id="summernote" class="summernote"></div>
                                 </div>
                             </div>
+
+
                         </div>
 
                         <button type="submit" class="btn btn-info btn-fill pull-right">Save Content</button>
@@ -66,18 +93,41 @@ view: dashboard_layout.html
     </div>
 </div>
 
+
+<script src="/js/summernote.js"></script>
+
 <script>
+//    $(document).ready(function() {
+//        $('.summernote').summernote();
+//    });
+//
+    jQuery(document).ready(function(){
+
+        $('.summernote').summernote({
+            height: 350,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+            focus: false                 // set focus to editable area after initializing summernote
+        });
+    });
+
+
 
     //logMessage(randomIntFromInterval(4,12));
 
     $('#contentForm').submit(function (e) {
         e.preventDefault();
 
-        formData = formToArray("contentForm");
-        formData.created_at = Math.floor(new Date().valueOf() / 1000);
-        formData.likes = randomIntFromInterval(4,12);
 
-        logMessage(formData);
+        var content = $('#summernote').summernote('code');
+
+        formData = formToArray("contentForm");
+        formData.created_at = Math.floor(new Date().getTime());
+        formData.likes = randomIntFromInterval(4,12);
+        formData.content = content;
+
+        //return;
+        //alert(formData.content);
 
         if(formData.content_type == ""){
             alert("Please select content type");

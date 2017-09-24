@@ -161,7 +161,7 @@ if (typeof firebase !== 'undefined') {
             });
 
             var date = new Date().getTime();
-            firebaseBaseDatabase.ref(path).child(newGeneratedKey).child(".priority").set(0 - date);
+            // firebaseBaseDatabase.ref(path).child(newGeneratedKey).child(".priority").set(0 - date);
             firebaseBaseDatabase.ref(path).child(newGeneratedKey).child("index").set(0 - date);
             firebaseBaseDatabase.ref(path).child(newGeneratedKey).child("created_at").set(date);
         },
@@ -342,7 +342,7 @@ if (typeof firebase !== 'undefined') {
 
             if (limit && limit != "") {
                 if (Math.floor(limit) == limit && $.isNumeric(limit)) {
-                    nodeRef = firebaseBaseDatabase.ref(path).limitToLast(limit).orderByPriority();
+                    nodeRef = firebaseBaseDatabase.ref(path).limitToFirst(limit).orderByChild('index');
                 } else {
                     var data = Array();
                     data.error = true;
